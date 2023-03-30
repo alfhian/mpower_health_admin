@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Crypt;
 
 use App\Models\UserInformation;
@@ -50,15 +51,11 @@ class LabResultController extends Controller
         ];
         $log        = LogManagement::store($log_data, $log_detail);
 
-        // Get file content
-        $file_content = file_get_contents('storage/lab_results/'.$file);
-
         // Decrypt file content
-        $decrypted = Crypt::decrypt($file_content);
+        $decrypted = Crypt::decrypt(Storage::get('public/lab_results/'.$file));
 
-        // Open file info and get the file type
-        $f          = finfo_open();
-        $mime_type  = finfo_buffer($f, $decrypted, FILEINFO_MIME_TYPE);
+        // Get file type
+        $mime_type  = Storage::mimeType('public/lab_results/'.$file);
 
         return view('layouts.show_file', ['file' => $decrypted, 'type' => $mime_type]);
     }
