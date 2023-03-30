@@ -70,15 +70,11 @@ class RecommendationController extends Controller
         ];
         $log        = LogManagement::store($log_data, $log_detail);
 
-        // Get file content
-        $file_content = file_get_contents('storage/recommendations/'.$file);
-
         // Decrypt file content
-        $decrypted = Crypt::decrypt($file_content);
+        $decrypted = Crypt::decrypt(Storage::get('public/recommendations/'.$file));
 
-        // Open file info and get the file type
-        $f          = finfo_open();
-        $mime_type  = finfo_buffer($f, $decrypted, FILEINFO_MIME_TYPE);
+        // Get file type
+        $mime_type  = Storage::mimeType('public/recommendations/'.$file);
 
         return view('layouts.show_file', ['file' => $decrypted, 'type' => $mime_type]);
     }
