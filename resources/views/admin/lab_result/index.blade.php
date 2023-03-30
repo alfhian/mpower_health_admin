@@ -83,17 +83,38 @@
                                 @foreach ($lab_result as $index => $row)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td><a href="{{ url('lab_result/show_file/'.$row->lab_result) }}"
-                                                target="_blank">#{{ $row->lab_result_no }}</a></td>
+                                        <td>
+                                            @if (Auth::user()->role_id == 3 || Auth::user()->role_id == 4)
+                                                <a href="{{ url('lab_result/show_file/' . $row->lab_result) }}"
+                                                    target="_blank">#{{ $row->lab_result_no }}</a>
+                                            @else
+                                                @if ($row->user_claim == Auth::id())
+                                                    <a href="{{ url('lab_result/show_file/' . $row->lab_result) }}"
+                                                        target="_blank">#{{ $row->lab_result_no }}</a>
+                                                @else
+                                                    #{{ $row->lab_result_no }}
+                                                @endif
+                                            @endif
+                                        </td>
                                         <td>{{ $row->client_id . '/' . $row->firstname . ' ' . $row->lastname }}</td>
                                         <td>{{ $row->upload_date }}</td>
                                         <td>
                                             @if ($row->recommendation_id == null)
                                                 -
                                             @else
-                                                <a href="{{ url('recommendation/show_file/'.$row->recommendation) }}"
-                                                    target="_blank">Recommendation
-                                                    link</a>
+                                                @if (Auth::user()->role_id == 3 || Auth::user()->role_id == 4)
+                                                    <a href="{{ url('recommendation/show_file/' . $row->recommendation) }}"
+                                                        target="_blank">Recommendation
+                                                        link</a>
+                                                @else
+                                                    @if ($row->admin == Auth::id())
+                                                        <a href="{{ url('recommendation/show_file/' . $row->recommendation) }}"
+                                                            target="_blank">Recommendation
+                                                            link</a>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                @endif
                                             @endif
                                         </td>
                                         <td>{{ $row->ticket_number }}</td>
